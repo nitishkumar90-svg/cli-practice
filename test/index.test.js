@@ -10,14 +10,34 @@
 // file. In this case we've defined the function and the corresponding test in the
 // same file for illustrative and learning purposes.
 
-function myCoolFunction() {
-  return 'Wow, what a cool function';
+//include external files for calculation
+let { getConversionRate } = require('./../src/conversion-rate')
+
+let usd_conversion = function() {
+  let rateList = {
+    USD: {
+      CAD: 10
+    }
+  };
+  return getConversionRate(rateList, 'USD', 'CAD');
 }
 
-describe('myCoolFunction()', () => {
-  test('should return the message: "Wow, what a cool function"', () => {
-    const result = myCoolFunction();
+let cad_conversion = function() {
+  let rateList = {
+    CAD: {
+      USD: 0.5
+    }
+  };
+  return getConversionRate(rateList, 'CAD', 'USD');
+}
 
-    expect(result).toBe('Wow, what a cool function');
+describe('conversions()', () => {
+  test('should return the current rate: 10', () => {
+    const result = usd_conversion();
+    expect(result).toBe(10);
+  });
+  test('should return the current rate: 0.5', () => {
+    const result = cad_conversion();
+    expect(result).toBe(0.5);
   });
 });

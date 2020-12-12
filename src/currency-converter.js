@@ -1,3 +1,7 @@
+//include external files
+let { validateUserInputValues } = require('./user-input-validator');
+let { getConversionRate } = require('./conversion-rate');
+
 // This file will contain the primary logic for the currency conversion program.
 // To run the program use the `node` command followed by the name of this file.
 // ie. `node currency-converter.js`.
@@ -15,7 +19,9 @@
 
 // We will store each piece of information in a dedicated variable for later use.
 
-
+let inputAmount = process.argv[2];
+let fromCurrency = process.argv[3];
+let toCurrency = process.argv[4];
 
 // --------------------------------------------------
 // Step 2: Validate user input
@@ -24,9 +30,7 @@
 
 // If any of the required information is missing, display a meaningful message
 // and exit the program.
-
-
-
+validateUserInputValues(inputAmount, fromCurrency, toCurrency);
 // --------------------------------------------------
 // Step 3: Define currency conversion rates
 // --------------------------------------------------
@@ -39,7 +43,14 @@
 // The conversion rates do not have to be accurate, athough this resource contains
 // up-to-date rate information: https://www.xe.com/
 
-
+let rateList = {
+    USD: {
+       CAD: 2
+    },
+    CAD: {
+       USD: 0.5
+    }
+}
 
 // --------------------------------------------------
 // Step 4: Ensure that a conversion rate exists
@@ -49,6 +60,24 @@
 
 // If the user supplies an invalid initial or target currency, display a meaningful
 // warning message and exit the program.
+if(rateList[fromCurrency] === undefined) {
+   console.log('');
+   console.log('---------------ERROR---------------');
+   console.warn(`Provided ${fromCurrency} currency is not listed yet.`);
+   console.log('----------EXITING PROGRAM----------');
+   console.log('');
+   console.log('');
+   process.exit();
+}
+
+if(rateList[fromCurrency][toCurrency] === undefined) {
+   console.log('');
+   console.log('---------------ERROR---------------');
+   console.warn(`Provided ${toCurrency} currency is not listed yet.`);   console.log('----------EXITING PROGRAM----------');
+   console.log('');
+   console.log('');
+   process.exit();
+}
 
 
 
@@ -59,7 +88,8 @@
 // information, and that a rate exists for each of the currencies.
 
 // Now we will compute the rate, apply it to the amount, and capture the result.
-
+let getCurrentRate = getConversionRate(rateList, fromCurrency, toCurrency);
+let finalValue = inputAmount*getCurrentRate;
 
 
 // --------------------------------------------------
@@ -69,3 +99,11 @@
 
 // This message should also include the original amount and currency information
 // supplied by the user.
+console.log('')
+console.log('')
+console.log('-------------------RESULT-------------------')
+console.log(`${fromCurrency} ${inputAmount} is successfully converted into ${toCurrency} ${finalValue}`);
+console.log('--------------------------------------------')
+console.log('')
+console.log('')
+
